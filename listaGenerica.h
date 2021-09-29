@@ -65,7 +65,7 @@ struct listadoble {
             end = nullptr;
             result = cursor->data;
         }
-        size--
+        size--;
 
         return result;
     }   
