@@ -1,9 +1,9 @@
 #include <iostream>
 using namespace std;
 
-#include "pedido.h"
+#include "queue.h"
 
 struct montacarga {
-    pedido colaPedido;
+    queue colaPedido;
     int duracion;
 };
