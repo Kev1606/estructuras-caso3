@@ -1,3 +1,17 @@
+// TECNOLOGICO DE COSTA RICA //
+/*
+
+    Curso: Estructuras de Datos
+    Profesor: Rodrigo Núñez Núñez
+    Grupo: 04
+
+    Caso #3
+    Fecha: 03 de Octubre del 2021
+    Autor: Kevin Vinicio Núñez Cruz (2021118002)
+           Joctan Antonio Porras Esquivel (2021)
+
+*/
+
 #include <iostream>
 #include <string>
 
@@ -25,8 +39,8 @@ int main(){
         for (int columna = 0; columna < arrayBodega[producto].columnasxTipo; columna++)
         {
             ListaBodega[indiceBodega].nombreProducto = arrayBodega[producto].tipoProducto;
-            cout << "Nombre de producto: " << ListaBodega[indiceBodega].nombreProducto << endl;
-            cout << "Columna: " << columna <<endl;
+            //cout << "Nombre de producto: " << ListaBodega[indiceBodega].nombreProducto << endl;
+            //cout << "Columna: " << columna <<endl;
 
             for (int unidades = 0; unidades < arrayBodega[producto].paletasxColumna; unidades++)
             {
@@ -45,7 +59,7 @@ int main(){
 
     pedido listaPedidos[CANTIDAD_PEDIDOS];
     listaPedidos[0] = {10,false,{"arroz","cerveza"},{60,100}};
-    listaPedidos[1] = {11,false,{"cerveza","arroz"},{250,90}};
+    listaPedidos[1] = {11,false,{"cerveza","arroz"},{850,90}};
 
     for (int pedidos = 0; pedidos < CANTIDAD_PEDIDOS; pedidos++){
         cout << "Numero de pedido: " <<listaPedidos[pedidos].numeroPedido << endl;
@@ -72,37 +86,11 @@ int main(){
     listaCarrito[2]=carrito3;
     listaCarrito[3]=carrito4;
 
+    // se asignan los pedidos a la cola de pedidos de los carritos
     listaCarrito[0].colaPedido.enqueue(&listaPedidos[0]);
     listaCarrito[1].colaPedido.enqueue(&listaPedidos[1]);
 
-/*     int variableRandom;
-    int array[2] = {0,1};
-    for (int i = 0; i < 2; i++){
-        variableRandom = rand()%2;
-        while (true) {
-            if (array[variableRandom]==-1){
-                variableRandom = rand()%2;
-            } else {
-                int numeroCarrito=0;
-                for (int i = 0; i < CANTIDAD_PEDIDOS; i++)
-                {
-                    pedido* pedidoAgregar = (pedido*)malloc(sizeof(pedido));
-                    pedidoAgregar->numeroPedido = listaPedidos[variableRandom].numeroPedido;
-                    if(numeroCarrito < CANTIDAD_MONTACARGAS){
-                        listaCarrito[numeroCarrito].colaPedido.enqueue(pedidoAgregar);
-                    } else {
-                        numeroCarrito = 0;
-                        listaCarrito[numeroCarrito].colaPedido.enqueue(pedidoAgregar);
-                    }
-                    numeroCarrito++;
-                }
-                array[variableRandom] = -1;
-                break;
-            }
-        }
-    } */
-
-    for (int i = 0; i < CANTIDAD_MONTACARGAS; i++) {
+/*     for (int i = 0; i < CANTIDAD_MONTACARGAS; i++) {
         if (!listaCarrito[i].colaPedido.isEmpty()) {
             pedido pedidoVerificado = (*(pedido*)malloc(sizeof(pedido)));
             pedidoVerificado = (*(pedido*)listaCarrito[i].colaPedido.dequeue());
@@ -118,59 +106,109 @@ int main(){
         }else {
             cout << "Este carrito esta vacio" << endl;
         }
-    }
+    } */
 
+// LOGICA QUE EVALUA LAS COLAS DE PEDIDOS DE LOS MONTACARGAS Y COMPLETA DICHOS PEDIDOS
     for (int carritos = 0; carritos < CANTIDAD_MONTACARGAS; carritos++)
     {
+        if (listaCarrito[carritos].colaPedido.isEmpty()) {
+            cout << "Ya no quedan pedidos a realizarse" << endl;
+            break;
+        }
+        bool parteTry = false;
+        bool esCompleto = true;
         pedido pedidoSacar = (*(pedido*)malloc(sizeof(pedido)));
         pedidoSacar = (*(pedido*)listaCarrito[carritos].colaPedido.dequeue());
+        int duracionMontacarga = 0;
         if (!pedidoSacar.estado){
+            // listaPedidos[0] = {10,false,{"arroz","cerveza"},{300,100}};
+            // listaPedidos[1] = {11,false,{"cerveza","arroz"},{750,90}};
             for (int productos = 0; productos < CANTIDAD_PRODUCTOS; productos++)
             {
                 int sacados = 0;
+                int cantidadASacar = pedidoSacar.cantidad[productos];
+                int sumarIndiceBodega = 0;
+
                 for (int bodega = 0; bodega < CANTIDAD_COLUMNAS_TOTALES; bodega++)
                 {
                     if (ListaBodega[bodega].nombreProducto.compare(pedidoSacar.tipoProducto[productos]) == 0){
                         //bodega arrayBodega[2] = {{"arroz",2,5,30},{"cerveza",3,3,100}};
-                        int cantidadASacar = pedidoSacar.cantidad[productos];
+                        //cantidadASacar = pedidoSacar.cantidad[productos];
                         for (; cantidadASacar > sacados ;)
                         {
+                            //cout << "momentos: " << sacados << endl;
                             if (!ListaBodega[bodega].columnas.isEmpty()){
                                 int cantidadProcesada = (*(int*)malloc(sizeof(int)));
                                 cantidadProcesada = (*(int*)ListaBodega[bodega].columnas.pop());
+                                duracionMontacarga+= DURACION_BAJADA_SUBIDA;
+                                //cout << "sumas: " << duracionMontacarga << endl;
                                 sacados += cantidadProcesada;
                             } else {
-                                continue;
+                                try
+                                {
+                                    sumarIndiceBodega = 1;
+                                    if (ListaBodega[bodega+sumarIndiceBodega].nombreProducto.compare(pedidoSacar.tipoProducto[productos]) == 0) {
+                                        for (; cantidadASacar > sacados ;) {
+                                            //cout << "momentos: "<< sacados << endl;
+                                            if (!ListaBodega[bodega+sumarIndiceBodega].columnas.isEmpty()){
+                                                if (ListaBodega[bodega+sumarIndiceBodega].nombreProducto.compare(pedidoSacar.tipoProducto[productos]) == 0){
+                                                    int cantidadProcesada = (*(int*)malloc(sizeof(int)));
+                                                    cantidadProcesada = (*(int*)ListaBodega[bodega+sumarIndiceBodega].columnas.pop());
+                                                    //cout << "\ncuanto suma  \n" << cantidadProcesada << endl;
+                                                    duracionMontacarga+= DURACION_BAJADA_SUBIDA;
+                                                    //cout << "sumas: " << duracionMontacarga << endl;
+                                                    sacados += cantidadProcesada;
+                                                } else {
+                                                    sacados = cantidadASacar;
+                                                    parteTry = true;
+                                                }
+                                            } else {
+                                                sumarIndiceBodega++;
+                                            }
+                                            //break;
+                                        }
+                                    }
+                                }
+                                catch(exception& e)
+                                {
+                                    esCompleto = false;
+                                    parteTry = true;
+                                }
+                                           
                             }
                         }
                         int diferencia = sacados-cantidadASacar;
                         // int* cantidad = (int*)malloc(sizeof(int));
                         // *cantidad = arrayBodega[producto].unidadesxPaleta;
-                        if (diferencia != 0){
+                        if (diferencia != 0 & diferencia > 0){
                             int* diferenciaAMeter = (int*)malloc(sizeof(int));
                             *diferenciaAMeter = diferencia;
-                            ListaBodega[bodega].columnas.push(diferenciaAMeter);
+                            ListaBodega[bodega+sumarIndiceBodega].columnas.push(diferenciaAMeter);
+                            duracionMontacarga+= DURACION_BAJADA_SUBIDA;
+                            esCompleto = true;
+                            break;
+                        } else {
+                            if (!parteTry){
+                                esCompleto = true;
+                            } else{
+                                esCompleto = false;
+                            }
+                            //esCompleto = true;
+                            break;
                         }                                  
                     } else {
-                        if (pedidoSacar.estado == false){
-                            cout << pedidoSacar.numeroPedido << "esta incompleto, pero se hizo lo que se pudo :( " << endl;
-                            /*
-                                NOS FALTA REVISAR DEBAJO DE CADA FOR PARA VER LAS CONDICIONES TERMINANTES
-                                
-                            */
+                        if (sacados < cantidadASacar){
+                            esCompleto = false;
                         }
                     }
-
                 }
-                
-                
+                //cout << "salimos de producto   " << duracionMontacarga << endl;
             }
-            
-        }
+            if (esCompleto){
+                cout << "El pedido numero: " << pedidoSacar.numeroPedido << "  Tardo en completarse: " << duracionMontacarga << " milisegundos" << endl;
+            } else{
+                cout << "El pedido numero: " << pedidoSacar.numeroPedido << "  Tardo, aunque no se completo todo: " << duracionMontacarga << " milisegundos" << endl;
+            }
+        }          
     }
-    
-
-
-
-
-}
+}    

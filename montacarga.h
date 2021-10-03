@@ -5,5 +5,4 @@ using namespace std;
 
 struct montacarga { 
     queue colaPedido;
-    int duracion;
 };
