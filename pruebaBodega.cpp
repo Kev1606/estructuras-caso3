@@ -7,128 +7,93 @@
 #include "montacarga.h"
 #include "listaGenerica.h"
 #include "producto.h"
-
-#define CANTIDAD_MONTACARGAS 4             //Se definen la cantidad de montacargas a crearse
-#define CANTIDAD_COLUMNAS_TOTALES 5        // por las columnas
+#include "constantes.h"
 
 using namespace std;
 
-struct stack pilaBodega;
-struct queue colaPedidos;
-struct listadoble listaMontacargas;
-
 int main(){
-    bodega b1 = {"arroz",2,5,30};   
-    bodega b2 = {"cerveza",3,3,100};
-
-    pilaBodega.push(&b1);
-    pilaBodega.push(&b2);
-
-    producto p1;
-    producto p2;
-    p1.nombreProducto = b1.tipoProducto;
-    p2.nombreProducto = b2.tipoProducto;
+    bodega arrayBodega[2] = {{"arroz",2,5,30},{"cerveza",3,3,100}};
 
     producto ListaBodega[CANTIDAD_COLUMNAS_TOTALES];
-    ListaBodega[0] = p1;
-    ListaBodega[1] = p1;
-    ListaBodega[2] = p2;
-    ListaBodega[3] = p2;
-    ListaBodega[4] = p2;
-    
-    for (int i = 0; i < b1.paletasxColumna; i++)
-    {
-        ListaBodega[0].columnas.push(&b1.unidadesxPaleta);
-    }
 
-    for (int i = 0; i < b1.paletasxColumna; i++)
-    {
-        ListaBodega[1].columnas.push(&b1.unidadesxPaleta);
-    }
+    int indiceBodega = 0;
+    int cantidad = 30;
 
-    for (int i = 0; i < b2.paletasxColumna; i++)
+    for (int producto = 0; producto < 2; producto++)
     {
-        ListaBodega[2].columnas.push(&b2.unidadesxPaleta);
-    }
+        for (int columna = 0; columna < arrayBodega[producto].columnasxTipo; columna++)
+        {
+            ListaBodega[indiceBodega].nombreProducto = arrayBodega[producto].tipoProducto;
+            cout << "Nombre de producto: " << ListaBodega[indiceBodega].nombreProducto << endl;
+            cout << "Columna: " << columna <<endl;
 
-    for (int i = 0; i < b2.paletasxColumna; i++)
-    {
-        ListaBodega[3].columnas.push(&b2.unidadesxPaleta);
-    }
-
-    for (int i = 0; i < b2.paletasxColumna; i++)
-    {
-        ListaBodega[4].columnas.push(&b2.unidadesxPaleta);
+            for (int unidades = 0; unidades < arrayBodega[producto].paletasxColumna; unidades++)
+            {
+                int* cantidad = (int*)malloc(sizeof(int));
+                *cantidad = arrayBodega[producto].unidadesxPaleta;
+                ListaBodega[indiceBodega].columnas.push(cantidad);
+                cout << (*(int*)ListaBodega[indiceBodega].columnas.pop()) << endl;
+            }
+            indiceBodega++;
+        }
     }
 
     cout << ListaBodega[0].nombreProducto << endl;
     cout << ListaBodega[2].nombreProducto << endl;
 
-    for (int i = 0; i < CANTIDAD_COLUMNAS_TOTALES; i++)
-    {
-        cout << "Columna: " << i << endl;
-        while (!ListaBodega[i].columnas.isEmpty())
-        {
-            //cout << "Columna: " << i << endl;
-            cout << (*(int*)ListaBodega[i].columnas.pop()) << endl;
+    pedido listaPedidos[CANTIDAD_PEDIDOS];
+    listaPedidos[0] = {10,false,{"arroz","cerveza"},{60,100}};
+    listaPedidos[1] = {11,false,{"cerveza","arroz"},{250,90}};
+
+    for (int pedidos = 0; pedidos < CANTIDAD_PEDIDOS; pedidos++){
+        cout << "Numero de pedido: " <<listaPedidos[pedidos].numeroPedido << endl;
+        if (listaPedidos[pedidos].estado == false){
+            cout << "El estado del pedido es: pendiente" << endl;
+        } else{
+            cout << "El estado del pedido es: completado" << endl;
+        }
+        for (int producto = 0; producto < CANTIDAD_PEDIDOS; producto++) {
+            cout << "Tipo de producto: " << listaPedidos[pedidos].tipoProducto[producto] << "\tCantidad a retirar: " <<listaPedidos[pedidos].cantidad[producto] << endl;
+        }
+    } 
+
+    //Montacargas a crearse 
+    montacarga carrito1;
+    montacarga carrito2;
+    montacarga carrito3;
+    montacarga carrito4;
+
+    montacarga listaCarrito[CANTIDAD_MONTACARGAS];
+    listaCarrito[0]=carrito1;
+    listaCarrito[1]=carrito2;
+    listaCarrito[2]=carrito3;
+    listaCarrito[3]=carrito4;
+
+    int variableRandom;
+    int array[2] = {0,1};
+    for (int i = 0; i < 2; i++){
+        variableRandom = rand()%2;
+        while (true) {
+            if (array[variableRandom]==-1){
+                variableRandom = rand()%2;
+            } else {
+                array[variableRandom] = -1;
+                break;
+            }
+            if (CANTIDAD_MONTACARGAS==CANTIDAD_PEDIDOS){
+                listaCarrito[variableRandom].colaPedido.enqueue(&listaPedidos[variableRandom]);
+            }
+        }
+    }
+
+    for (int i = 0; i < CANTIDAD_MONTACARGAS; i++) {
+        if (!listaCarrito[i].colaPedido.isEmpty()) {
+            cout << listaCarrito[i].colaPedido.dequeue();
+        }else{
+            cout << "vacia" << endl;
         }
     }
     
-
-/*     cout << (*(int*)ListaBodega[0].columnas.pop()) << endl;
-    cout << (*(int*)ListaBodega[1].columnas.pop()) << endl;
-    cout << (*(int*)ListaBodega[2].columnas.pop()) << endl;
-    cout << (*(int*)ListaBodega[3].columnas.pop()) << endl;
-    cout << (*(int*)ListaBodega[4].columnas.pop()) << endl; */
-
     
-
-    //EJEMPLO DE LA PILA DE BODEGA
-    //FUNCIONANDO
-/*     while (!pilaBodega.isEmpty())
-    {
-        struct bodega currentElement = (*(struct bodega*)pilaBodega.pop());
-        cout << "Tipo de Producto en Bodega: " << currentElement.tipoProducto << endl;
-        cout << "Cantidad de Columnas destinadas: " << currentElement.columnasxTipo << endl;
-    } */
-    
-    pedido pedido1 = {10,false,"arroz",60};
-    pedido pedido2 = {11,false,"cerveza",250};
-
-    pedido listaPedidos[2];
-    listaPedidos[0] = pedido1;
-    listaPedidos[1] = pedido2;
-
-    //colaPedidos.enqueue(&pedido1);
-    //colaPedidos.enqueue(&pedido2);
-
-    for (int i = 0; i < 2; i++)
-    {
-        cout << listaPedidos[i].tipoProducto << listaPedidos[i].cantidad << endl;
-    }
-    
-    //EJEMPLO DE LA COLA DE PEDIDOS
-    //FUNCIONANDO
-/*     while (!colaPedidos.isEmpty())
-    {
-        struct pedido currentElement = (*(struct pedido*)colaPedidos.dequeue());
-        cout << "#Pedido: " << currentElement.numeroPedido << endl;
-        cout << "Tipo de Pedido: " << currentElement.tipoProducto << endl;
-    } */
-
-    montacarga carrito;
-    for (int i = 0; i < CANTIDAD_MONTACARGAS; i++)
-    {
-        listaMontacargas.addToBegining(&carrito);
-    }
-
-    cout << listaMontacargas.getSize() << endl;
-
-/*     for (nodo* i = pilaBodega.stackList.start; i != nullptr; i = i->next)
-    {
-        void* genPointer = i->data;
-        bodega* pointerBodega = (bodega*)genPointer;
-        cout << pointerBodega->tipoProducto << endl;
-    } */
 
 }

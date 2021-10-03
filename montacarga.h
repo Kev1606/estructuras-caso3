@@ -3,7 +3,7 @@ using namespace std;
 
 #include "queue.h"
 
-struct montacarga {
+struct montacarga { 
     queue colaPedido;
     int duracion;
 };
