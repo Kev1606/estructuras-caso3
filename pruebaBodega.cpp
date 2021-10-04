@@ -8,7 +8,7 @@
     Caso #3
     Fecha: 03 de Octubre del 2021
     Autor: Kevin Vinicio Núñez Cruz (2021118002)
-           Joctan Antonio Porras Esquivel (2021)
+           Joctan Antonio Porras Esquivel (2021069671)
 
 */
 
